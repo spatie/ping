@@ -24,8 +24,6 @@ composer require spatie/ping
 
 ## Usage
 
-### Basic ping
-
 The simplest way to ping a host:
 
 ```php
@@ -121,31 +119,18 @@ $newResult = PingResult::fromArray($array);
 
 ## Error handling
 
-The package handles various ping failure scenarios and categorizes them:
+The `error()` method on a `PingResult` will return a case of the `Spatie\Ping\PingError` enum. 
 
 ```php
+use Spatie\Ping\Ping;
 use Spatie\Ping\PingError;
 
 $result = (new Ping('non-existent-host.invalid'))->run();
 
-if ($result->hasError()) {
-    match($result->error()) {
-        PingError::HostnameNotFound => echo 'Host not found',
-        PingError::HostUnreachable => echo 'Host unreachable', 
-        PingError::Timeout => echo 'Request timed out',
-        PingError::PermissionDenied => echo 'Permission denied',
-        PingError::UnknownError => echo 'Unknown error occurred',
-    };
+if (! $result->isSuccess()) {
+    return $result->error() // returns the enum case Spatie\Ping\PingError::HostnameNotFound
 }
 ```
-
-## Requirements
-
-- PHP 8.4+
-- System `ping` command available
-- Symfony Process component
-
-The package automatically handles differences between macOS and Linux ping implementations.
 
 ## Testing
 
