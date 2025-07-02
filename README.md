@@ -6,6 +6,32 @@
 
 This package provides a simple way to execute ICMP ping commands and parse the results into structured data. It wraps the system's ping command and returns detailed information about packet loss, response times, and connectivity status.
 
+```php
+use Spatie\Ping\Ping;
+
+$result = (new Ping('8.8.8.8'))->run(); // returns an instance of \Spatie\Ping\PingResult
+
+// Basic status
+echo $result->isSuccess() ? 'Success' : 'Failed';
+echo $result->hasError() ? "Error: {$result->error()?->value}" : 'No errors';
+
+// Packet statistics
+echo "Packets transmitted: {$result->packetsTransmitted()}";
+echo "Packets received: {$result->packetsReceived()}";
+echo "Packet loss: {$result->packetLossPercentage()}%";
+
+// Timing information
+echo "Min time: {$result->minimumTime()}ms";
+echo "Max time: {$result->maximumTime()}ms";  
+echo "Average time: {$result->averageTime()}ms";
+echo "Standard deviation: {$result->standardDeviationTime()}ms";
+
+// Individual ping lines
+foreach ($result->lines() as $line) {
+    echo "Response: {$line->getRawLine()} ({$line->getTimeInMs()}ms)";
+}
+```
+
 ## Support us
 
 [<img src="https://github-ads.s3.eu-central-1.amazonaws.com/ping.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/ping)
