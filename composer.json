@@ -19,8 +19,9 @@
         "symfony/process": "^7.0"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0",
         "laravel/pint": "^1.0",
+        "pestphp/pest": "^3.0",
+        "spatie/pest-expectations": "^1.11",
         "spatie/ray": "^1.28"
     },
     "autoload": {

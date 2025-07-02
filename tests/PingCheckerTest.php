@@ -18,7 +18,7 @@ it('can perform a successful ping check', function () {
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->raw)->toContain('8.8.8.8');
-});
+})->skipOnGitHubActions();
 
 it('can handle failed ping to non-existent host', function () {
     $checker = new Ping('non-existent-host-12345.invalid', timeout: 2, count: 1);
@@ -30,7 +30,7 @@ it('can handle failed ping to non-existent host', function () {
     expect($result->packetLossPercentage())->toBe(100);
     expect($result->hasError())->toBeTrue();
     expect($result->error())->toBe(PingError::HostnameNotFound);
-});
+})->skipOnGitHubActions();
 
 it('can parse ping result with multiple packets', function () {
     $checker = new Ping('8.8.8.8', timeout: 5, count: 4);
@@ -45,7 +45,7 @@ it('can parse ping result with multiple packets', function () {
         expect($line->getTimeInMs())->toBeGreaterThan(0);
         expect($line->getRawLine())->toContain('time');
     }
-});
+})->skipOnGitHubActions();
 
 it('can extract packet statistics', function () {
     $checker = new Ping('8.8.8.8', timeout: 5, count: 3);
@@ -61,7 +61,7 @@ it('can extract packet statistics', function () {
         expect($result->maximumTime())->toBeGreaterThanOrEqual($result->minimumTime());
         expect($result->averageTime())->toBeBetween($result->minimumTime(), $result->maximumTime());
     }
-});
+})->skipOnGitHubActions();
 
 it('can convert result to array', function () {
     $checker = new Ping('8.8.8.8', timeout: 3, count: 2, interval: 1.5, packetSize: 64, ttl: 32);
@@ -97,7 +97,7 @@ it('can convert result to array', function () {
     expect($array['options']['ttl'])->toBe(32);
 
     expect($array['timings'])->toHaveKeys(['minimum_time', 'maximum_time', 'average_time', 'standard_deviation_time']);
-});
+})->skipOnGitHubActions();
 
 it('handles timeout correctly', function () {
     $checker = new Ping('192.0.2.1', timeout: 2, count: 1); // Use TEST-NET-1 address
@@ -108,7 +108,7 @@ it('handles timeout correctly', function () {
     // This should timeout or fail - we just ensure it returns a valid result
     expect($result->packetLossPercentage())->toBeInt();
     expect($result->packetLossPercentage())->toBeBetween(0, 100);
-});
+})->skipOnGitHubActions();
 
 it('creates ping result line correctly', function () {
     $line = PingResultLine::fromLine('64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=15.2 ms');
@@ -192,7 +192,7 @@ it('can perform ping check with custom interval', function () {
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->raw)->toContain('8.8.8.8');
-});
+})->skipOnGitHubActions();
 
 it('builds ping command with interval correctly', function () {
     $checker = new Ping('example.com', timeout: 5, count: 2, interval: 1.5);
@@ -218,7 +218,7 @@ it('can perform ping check with custom packet size', function () {
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->raw)->toContain('8.8.8.8');
-});
+})->skipOnGitHubActions();
 
 it('builds ping command with packet size correctly', function () {
     $checker = new Ping('example.com', timeout: 5, count: 2, packetSize: 128);
@@ -260,7 +260,7 @@ it('can perform ping check with custom TTL', function () {
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->raw)->toContain('8.8.8.8');
-});
+})->skipOnGitHubActions();
 
 it('builds ping command with TTL correctly', function () {
     $checker = new Ping('example.com', timeout: 5, count: 2, ttl: 32);
@@ -335,7 +335,7 @@ it('can create PingResult from toArray output with real ping data', function () 
     expect($reconstructedResult->isSuccess())->toBe($originalResult->isSuccess());
     expect($reconstructedResult->getHost())->toBe($originalResult->getHost());
     expect($reconstructedResult->lines())->toHaveCount(count($originalResult->lines()));
-});
+})->skipOnGitHubActions();
 
 it('can create PingResult from toArray output with failed ping (unknown hostname)', function () {
     // Execute a real ping to an unknown hostname to get actual failure data
@@ -389,7 +389,7 @@ it('can create PingResult from toArray output with failed ping (unknown hostname
     expect($reconstructedResult->packetLossPercentage())->toBe($originalResult->packetLossPercentage());
     expect($reconstructedResult->packetLossPercentage())->toBe(100);
     expect($reconstructedResult->lines())->toHaveCount(count($originalResult->lines()));
-});
+})->skipOnGitHubActions();
 
 it('can use setter methods to configure ping options', function () {
     $checker = new Ping('8.8.8.8');
@@ -412,4 +412,4 @@ it('can use setter methods to configure ping options', function () {
     expect($array['options']['interval'])->toBe(0.5);
     expect($array['options']['packet_size'])->toBe(128);
     expect($array['options']['ttl'])->toBe(32);
-});
+})->skipOnGitHubActions();
