@@ -75,7 +75,7 @@ $result = (new Ping(
     count: 3,        // number of packets
     interval: 1.0,   // seconds between packets
     packetSize: 64,  // bytes
-    ttl: 64         // time to live
+    ttl: 64          // time to live
 ))->run();
 ```
 
