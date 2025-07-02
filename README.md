@@ -145,16 +145,15 @@ $newResult = PingResult::fromArray($array);
 
 ## Error handling
 
-The `error()` method on a `PingResult` will return a case of the `Spatie\Ping\PingError` enum. 
+The `error()` method on a `PingResult` will return a case of the `Spatie\Ping\Enums\PingError` enum.
 
 ```php
 use Spatie\Ping\Ping;
-use Spatie\Ping\PingError;
 
 $result = (new Ping('non-existent-host.invalid'))->run();
 
 if (! $result->isSuccess()) {
-    return $result->error() // returns the enum case Spatie\Ping\PingError::HostnameNotFound
+    return $result->error() // returns the enum case Spatie\Ping\Enums\PingError::HostnameNotFound
 }
 ```
 

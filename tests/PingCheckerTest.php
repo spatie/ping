@@ -3,8 +3,8 @@
 namespace Tests\Feature\PingCheck;
 
 use ReflectionClass;
+use Spatie\Ping\Enums\PingError;
 use Spatie\Ping\Ping;
-use Spatie\Ping\PingError;
 use Spatie\Ping\PingResult;
 use Spatie\Ping\PingResultLine;
 

@@ -2,6 +2,7 @@
 
 namespace Spatie\Ping;
 
+use Spatie\Ping\Enums\PingError;
 use Stringable;
 
 class PingResult implements Stringable

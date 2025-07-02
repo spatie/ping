@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Ping;
+namespace Spatie\Ping\Enums;
 
 enum PingError: string
 {
