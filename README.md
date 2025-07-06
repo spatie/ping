@@ -74,7 +74,7 @@ $result = (new Ping(
     timeout: 5,      // seconds
     count: 3,        // number of packets
     interval: 1.0,   // seconds between packets
-    packetSizeInBytes: 64,  // bytes
+    packetSizeInBytes: 64, // how big the packet is we'll send to the server
     ttl: 64          // time to live (maximum number of hops)
 ))->run();
 ```
