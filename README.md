@@ -21,10 +21,10 @@ echo "Packets received: {$result->packetsReceived()}";
 echo "Packet loss: {$result->packetLossPercentage()}%";
 
 // Timing information
-echo "Min time: {$result->minimumTime()}ms";
-echo "Max time: {$result->maximumTime()}ms";  
-echo "Average time: {$result->averageTime()}ms";
-echo "Standard deviation: {$result->standardDeviationTime()}ms";
+echo "Min time: {$result->minimumTimeInMs()}ms";
+echo "Max time: {$result->maximumTimeInMs()}ms";  
+echo "Average time: {$result->averageTimeInMs()}ms";
+echo "Standard deviation: {$result->standardDeviationTimeInMs()}ms";
 
 // Individual ping lines
 foreach ($result->lines() as $line) {
@@ -108,10 +108,10 @@ echo "Packets received: {$result->packetsReceived()}";
 echo "Packet loss: {$result->packetLossPercentage()}%";
 
 // Timing information
-echo "Min time: {$result->minimumTime()}ms";
-echo "Max time: {$result->maximumTime()}ms";  
-echo "Average time: {$result->averageTime()}ms";
-echo "Standard deviation: {$result->standardDeviationTime()}ms";
+echo "Min time: {$result->minimumTimeInMs()}ms";
+echo "Max time: {$result->maximumTimeInMs()}ms";  
+echo "Average time: {$result->averageTimeInMs()}ms";
+echo "Standard deviation: {$result->standardDeviationTimeInMs()}ms";
 
 // Individual ping lines
 foreach ($result->lines() as $line) {

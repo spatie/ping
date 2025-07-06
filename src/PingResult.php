@@ -139,22 +139,22 @@ class PingResult implements Stringable
         return $this->numberOfPacketsReceived;
     }
 
-    public function minimumTime(): ?float
+    public function minimumTimeInMs(): ?float
     {
         return $this->minimumTimeInMs;
     }
 
-    public function maximumTime(): ?float
+    public function maximumTimeInMs(): ?float
     {
         return $this->maximumTimeInMs;
     }
 
-    public function averageTime(): ?float
+    public function averageTimeInMs(): ?float
     {
         return $this->averageTimeInMs;
     }
 
-    public function standardDeviationTime(): ?float
+    public function standardDeviationTimeInMs(): ?float
     {
         return $this->standardDeviationTimeInMs;
     }

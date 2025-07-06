@@ -56,10 +56,10 @@ it('can extract packet statistics', function () {
     expect($result->packetsReceived())->toBeGreaterThanOrEqual(0);
     expect($result->packetsReceived())->toBeLessThanOrEqual(3);
 
-    if ($result->minimumTime() !== null) {
-        expect($result->minimumTime())->toBeGreaterThan(0);
-        expect($result->maximumTime())->toBeGreaterThanOrEqual($result->minimumTime());
-        expect($result->averageTime())->toBeBetween($result->minimumTime(), $result->maximumTime());
+    if ($result->minimumTimeInMs() !== null) {
+        expect($result->minimumTimeInMs())->toBeGreaterThan(0);
+        expect($result->maximumTimeInMs())->toBeGreaterThanOrEqual($result->minimumTimeInMs());
+        expect($result->averageTimeInMs())->toBeBetween($result->minimumTimeInMs(), $result->maximumTimeInMs());
     }
 })->skipOnGitHubActions();
 
@@ -139,10 +139,10 @@ it('can parse a successful ping output with statistics', function () {
     expect($result->lines())->toHaveCount(3);
     expect($result->packetsTransmitted())->toBe(3);
     expect($result->packetsReceived())->toBe(3);
-    expect($result->minimumTime())->toBe(8.5);
-    expect($result->maximumTime())->toBe(12.3);
-    expect($result->averageTime())->toBe(10.2);
-    expect($result->standardDeviationTime())->toBe(1.8);
+    expect($result->minimumTimeInMs())->toBe(8.5);
+    expect($result->maximumTimeInMs())->toBe(12.3);
+    expect($result->averageTimeInMs())->toBe(10.2);
+    expect($result->standardDeviationTimeInMs())->toBe(1.8);
     expect($result->isSuccess())->toBe(true);
     expect($result->packetLossPercentage())->toBe(0);
     expect($result->error())->toBeNull();
