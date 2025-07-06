@@ -13,7 +13,7 @@ class Ping
         protected int $timeout = 5,
         protected int $count = 1,
         protected float $interval = 1.0,
-        protected int $packetSize = 56,
+        protected int $packetSizeInBytes = 56,
         protected int $ttl = 64
     ) {}
 
@@ -29,7 +29,7 @@ class Ping
             host: $this->hostname,
             timeout: $this->timeout,
             interval: $this->interval,
-            packetSize: $this->packetSize,
+            packetSize: $this->packetSizeInBytes,
             ttl: $this->ttl,
         );
     }
@@ -60,7 +60,7 @@ class Ping
         return array_merge($standardOutput, $errorLines);
     }
 
-    public function timeout(int $timeout): self
+    public function timeoutInSeconds(int $timeout): self
     {
         $this->timeout = $timeout;
 
@@ -81,9 +81,9 @@ class Ping
         return $this;
     }
 
-    public function packetSize(int $packetSize): self
+    public function packetSizeInBytes(int $packetSizeInBytes): self
     {
-        $this->packetSize = $packetSize;
+        $this->packetSizeInBytes = $packetSizeInBytes;
 
         return $this;
     }
@@ -154,7 +154,7 @@ class Ping
     {
         if ($this->isCustomPacketSize()) {
             $this->currentCommand[] = '-s';
-            $this->currentCommand[] = (string) $this->packetSize;
+            $this->currentCommand[] = (string) $this->packetSizeInBytes;
         }
 
         return $this;
@@ -194,7 +194,7 @@ class Ping
 
     protected function isCustomPacketSize(): bool
     {
-        return $this->packetSize !== 56;
+        return $this->packetSizeInBytes !== 56;
     }
 
     protected function isCustomTtl(): bool

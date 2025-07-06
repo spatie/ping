@@ -64,7 +64,7 @@ it('can extract packet statistics', function () {
 })->skipOnGitHubActions();
 
 it('can convert result to array', function () {
-    $checker = new Ping('8.8.8.8', timeout: 3, count: 2, interval: 1.5, packetSize: 64, ttl: 32);
+    $checker = new Ping('8.8.8.8', timeout: 3, count: 2, interval: 1.5, packetSizeInBytes: 64, ttl: 32);
 
     $result = $checker->run();
     $array = $result->toArray();
@@ -73,10 +73,9 @@ it('can convert result to array', function () {
         'success',
         'error',
         'host',
-        'packet_loss',
+        'packet_loss_percentage',
         'packets_transmitted',
         'packets_received',
-        'response_time',
         'options',
         'timings',
         'raw_output',
@@ -84,19 +83,18 @@ it('can convert result to array', function () {
     ]);
 
     expect($array['success'])->toBeBool();
-    expect($array['response_time'])->toBeFloat();
-    expect($array['packet_loss'])->toBeInt();
+    expect($array['packet_loss_percentage'])->toBeInt();
     expect($array['host'])->toBe('8.8.8.8');
     expect($array['lines'])->toBeArray();
     expect(count($array['lines']))->toBe(count($result->lines()));
 
-    expect($array['options'])->toHaveKeys(['timeout', 'interval', 'packet_size', 'ttl']);
-    expect($array['options']['timeout'])->toBe(3);
+    expect($array['options'])->toHaveKeys(['timeout_in_seconds', 'interval', 'packet_size_in_bytes', 'ttl']);
+    expect($array['options']['timeout_in_seconds'])->toBe(3);
     expect($array['options']['interval'])->toBe(1.5);
-    expect($array['options']['packet_size'])->toBe(64);
+    expect($array['options']['packet_size_in_bytes'])->toBe(64);
     expect($array['options']['ttl'])->toBe(32);
 
-    expect($array['timings'])->toHaveKeys(['minimum_time', 'maximum_time', 'average_time', 'standard_deviation_time']);
+    expect($array['timings'])->toHaveKeys(['minimum_time_in_ms', 'maximum_time_in_ms', 'average_time_in_ms', 'standard_deviation_time_in_ms']);
 })->skipOnGitHubActions();
 
 it('handles timeout correctly', function () {
@@ -209,7 +207,7 @@ it('builds ping command with interval correctly', function () {
 });
 
 it('can perform ping check with custom packet size', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 2, packetSize: 64);
+    $checker = new Ping('8.8.8.8', timeout: 5, count: 2, packetSizeInBytes: 64);
 
     $result = $checker->run();
 
@@ -221,7 +219,7 @@ it('can perform ping check with custom packet size', function () {
 })->skipOnGitHubActions();
 
 it('builds ping command with packet size correctly', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, packetSize: 128);
+    $checker = new Ping('example.com', timeout: 5, count: 2, packetSizeInBytes: 128);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -235,7 +233,7 @@ it('builds ping command with packet size correctly', function () {
 });
 
 it('builds ping command with both interval and packet size', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, interval: 0.5, packetSize: 256);
+    $checker = new Ping('example.com', timeout: 5, count: 2, interval: 0.5, packetSizeInBytes: 256);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -277,7 +275,7 @@ it('builds ping command with TTL correctly', function () {
 });
 
 it('builds ping command with all options', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 3, interval: 0.2, packetSize: 512, ttl: 128);
+    $checker = new Ping('example.com', timeout: 5, count: 3, interval: 0.2, packetSizeInBytes: 512, ttl: 128);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -308,7 +306,7 @@ it('can create PingResult from toArray output with real ping data', function () 
     expect($reconstructedArray['success'])->toBe($originalArray['success']);
     expect($reconstructedArray['error'])->toBe($originalArray['error']);
     expect($reconstructedArray['host'])->toBe($originalArray['host']);
-    expect($reconstructedArray['packet_loss'])->toBe($originalArray['packet_loss']);
+    expect($reconstructedArray['packet_loss_percentage'])->toBe($originalArray['packet_loss_percentage']);
     expect($reconstructedArray['packets_transmitted'])->toBe($originalArray['packets_transmitted']);
     expect($reconstructedArray['packets_received'])->toBe($originalArray['packets_received']);
 
@@ -329,7 +327,6 @@ it('can create PingResult from toArray output with real ping data', function () 
     }
 
     // Response time should be calculated the same way
-    expect($reconstructedArray['response_time'])->toBe($originalArray['response_time']);
 
     // Verify core functionality works on reconstructed object
     expect($reconstructedResult->isSuccess())->toBe($originalResult->isSuccess());
@@ -358,8 +355,8 @@ it('can create PingResult from toArray output with failed ping (unknown hostname
     expect($reconstructedArray['error'])->toBe($originalArray['error']);
     expect($reconstructedArray['error'])->not()->toBeNull();
     expect($reconstructedArray['host'])->toBe($originalArray['host']);
-    expect($reconstructedArray['packet_loss'])->toBe($originalArray['packet_loss']);
-    expect($reconstructedArray['packet_loss'])->toBe(100);
+    expect($reconstructedArray['packet_loss_percentage'])->toBe($originalArray['packet_loss_percentage']);
+    expect($reconstructedArray['packet_loss_percentage'])->toBe(100);
     expect($reconstructedArray['packets_transmitted'])->toBe($originalArray['packets_transmitted']);
     expect($reconstructedArray['packets_received'])->toBe($originalArray['packets_received']);
 
@@ -377,7 +374,6 @@ it('can create PingResult from toArray output with failed ping (unknown hostname
     expect($reconstructedArray['lines'])->toBe($originalArray['lines']);
 
     // Response time should be calculated the same way (likely 0.0 for failed ping)
-    expect($reconstructedArray['response_time'])->toBe($originalArray['response_time']);
 
     // Verify core functionality works on reconstructed object for failed ping
     expect($reconstructedResult->isSuccess())->toBe($originalResult->isSuccess());
@@ -395,10 +391,10 @@ it('can use setter methods to configure ping options', function () {
     $checker = new Ping('8.8.8.8');
 
     // Use fluent interface to configure all options
-    $checker->timeout(10)
+    $checker->timeoutInSeconds(10)
         ->count(2)
         ->interval(0.5)
-        ->packetSize(128)
+        ->packetSizeInBytes(128)
         ->ttl(32);
 
     $result = $checker->run();
@@ -408,8 +404,8 @@ it('can use setter methods to configure ping options', function () {
 
     // Verify the options were applied correctly in the result
     $array = $result->toArray();
-    expect($array['options']['timeout'])->toBe(10);
+    expect($array['options']['timeout_in_seconds'])->toBe(10);
     expect($array['options']['interval'])->toBe(0.5);
-    expect($array['options']['packet_size'])->toBe(128);
+    expect($array['options']['packet_size_in_bytes'])->toBe(128);
     expect($array['options']['ttl'])->toBe(32);
 })->skipOnGitHubActions();

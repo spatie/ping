@@ -74,7 +74,7 @@ $result = (new Ping(
     timeout: 5,      // seconds
     count: 3,        // number of packets
     interval: 1.0,   // seconds between packets
-    packetSize: 64,  // bytes
+    packetSizeInBytes: 64,  // bytes
     ttl: 64          // time to live
 ))->run();
 ```
@@ -83,10 +83,10 @@ Or use the fluent interface:
 
 ```php
 $result = (new Ping('8.8.8.8'))
-    ->timeout(10)
+    ->timeoutInSeconds(10)
     ->count(5)
     ->interval(0.5)
-    ->packetSize(128)
+    ->packetSizeInBytes(128)
     ->ttl(32)
     ->run();
 ```
@@ -130,11 +130,29 @@ You can convert the result to an array for easy serialization:
 $result = (new Ping('8.8.8.8'))->run();
 $array = $result->toArray();
 
-// The array contains all ping data including:
-// - success status and error information
-// - packet statistics and timing data  
-// - configuration options used
-// - raw output and parsed lines
+// The array contains all ping data:
+// [
+//     'success' => true,
+//     'error' => null,
+//     'host' => '8.8.8.8',
+//     'packet_loss_percentage' => 0,
+//     'packets_transmitted' => 4,
+//     'packets_received' => 4,
+//     'options' => [
+//         'timeout_in_seconds' => 5,
+//         'interval' => 1.0,
+//         'packet_size_in_bytes' => 56,
+//         'ttl' => 64,
+//     ],
+//     'timings' => [
+//         'minimum_time_in_ms' => 8.5,
+//         'maximum_time_in_ms' => 12.3,
+//         'average_time_in_ms' => 10.2,
+//         'standard_deviation_time_in_ms' => 1.8,
+//     ],
+//     'raw_output' => '...',
+//     'lines' => [...],
+// ]
 ```
 
 You can also reconstruct a `PingResult` from an array:

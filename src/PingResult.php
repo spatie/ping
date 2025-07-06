@@ -23,7 +23,7 @@ class PingResult implements Stringable
 
     protected float $interval = 1.0;
 
-    protected int $packetSize = 56;
+    protected int $packetSizeInBytes = 56;
 
     protected int $ttl = 64;
 
@@ -56,7 +56,7 @@ class PingResult implements Stringable
         $result->host = $host;
         $result->timeout = $timeout;
         $result->interval = $interval;
-        $result->packetSize = $packetSize;
+        $result->packetSizeInBytes = $packetSize;
         $result->ttl = $ttl;
 
         if ($returnCode !== 0) {
@@ -83,19 +83,19 @@ class PingResult implements Stringable
         $result->success = $data['success'] ?? false;
         $result->error = isset($data['error']) ? PingError::from($data['error']) : null;
         $result->host = $data['host'] ?? null;
-        $result->packetLossPercentage = $data['packet_loss'] ?? null;
+        $result->packetLossPercentage = $data['packet_loss_percentage'] ?? null;
         $result->numberOfPacketsTransmitted = $data['packets_transmitted'] ?? null;
         $result->numberOfPacketsReceived = $data['packets_received'] ?? null;
 
-        $result->timeout = $data['options']['timeout'] ?? null;
+        $result->timeout = $data['options']['timeout_in_seconds'] ?? null;
         $result->interval = $data['options']['interval'] ?? 1.0;
-        $result->packetSize = $data['options']['packet_size'] ?? 56;
+        $result->packetSizeInBytes = $data['options']['packet_size_in_bytes'] ?? 56;
         $result->ttl = $data['options']['ttl'] ?? 64;
 
-        $result->minimumTimeInMs = $data['timings']['minimum_time'] ?? null;
-        $result->maximumTimeInMs = $data['timings']['maximum_time'] ?? null;
-        $result->averageTimeInMs = $data['timings']['average_time'] ?? null;
-        $result->standardDeviationTimeInMs = $data['timings']['standard_deviation_time'] ?? null;
+        $result->minimumTimeInMs = $data['timings']['minimum_time_in_ms'] ?? null;
+        $result->maximumTimeInMs = $data['timings']['maximum_time_in_ms'] ?? null;
+        $result->averageTimeInMs = $data['timings']['average_time_in_ms'] ?? null;
+        $result->standardDeviationTimeInMs = $data['timings']['standard_deviation_time_in_ms'] ?? null;
 
         $result->raw = $data['raw_output'] ?? '';
         $result->lines = array_map(
@@ -178,9 +178,9 @@ class PingResult implements Stringable
         return $total / count($this->lines);
     }
 
-    public function packetLossPercentage(): ?int
+    public function packetLossPercentage(): int
     {
-        return $this->packetLossPercentage;
+        return $this->packetLossPercentage ?? 0;
     }
 
     public function getHost(): ?string
@@ -188,7 +188,7 @@ class PingResult implements Stringable
         return $this->host;
     }
 
-    public function timeout(): ?int
+    public function timeoutInSeconds(): ?int
     {
         return $this->timeout;
     }
@@ -319,27 +319,26 @@ class PingResult implements Stringable
     public function toArray(): array
     {
         return [
-            'success' => $this->success,
-            'error' => $this->error?->value,
-            'host' => $this->host,
-            'packet_loss' => $this->packetLossPercentage ?? 0,
-            'packets_transmitted' => $this->numberOfPacketsTransmitted,
-            'packets_received' => $this->numberOfPacketsReceived,
-            'response_time' => $this->averageResponseTimeInMs(),
+            'success' => $this->isSuccess(),
+            'error' => $this->error()?->value,
+            'host' => $this->getHost(),
+            'packet_loss_percentage' => $this->packetLossPercentage(),
+            'packets_transmitted' => $this->packetsTransmitted(),
+            'packets_received' => $this->packetsReceived(),
             'options' => [
-                'timeout' => $this->timeout,
+                'timeout_in_seconds' => $this->timeoutInSeconds(),
                 'interval' => $this->interval,
-                'packet_size' => $this->packetSize,
+                'packet_size_in_bytes' => $this->packetSizeInBytes,
                 'ttl' => $this->ttl,
             ],
             'timings' => [
-                'minimum_time' => $this->minimumTimeInMs,
-                'maximum_time' => $this->maximumTimeInMs,
-                'average_time' => $this->averageTimeInMs,
-                'standard_deviation_time' => $this->standardDeviationTimeInMs,
+                'minimum_time_in_ms' => $this->minimumTimeInMs(),
+                'maximum_time_in_ms' => $this->maximumTimeInMs(),
+                'average_time_in_ms' => $this->averageTimeInMs(),
+                'standard_deviation_time_in_ms' => $this->standardDeviationTimeInMs(),
             ],
             'raw_output' => $this->raw,
-            'lines' => array_map(fn ($line) => $line->toArray(), $this->lines),
+            'lines' => array_map(fn ($line) => $line->toArray(), $this->lines()),
         ];
     }
 
