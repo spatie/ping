@@ -1,4 +1,4 @@
-# Run an ICMP ping and get structured results
+# 🏓 Run an ICMP ping and get structured results
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/ping.svg?style=flat-square)](https://packagist.org/packages/spatie/ping)
 [![Tests](https://img.shields.io/github/actions/workflow/status/spatie/ping/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/spatie/ping/actions/workflows/run-tests.yml)
