@@ -10,11 +10,11 @@ class Ping
 
     public function __construct(
         protected string $hostname,
-        protected int $timeout = 5,
+        protected int $timeoutInSeconds = 5,
         protected int $count = 1,
-        protected float $interval = 1.0,
+        protected float $intervalInSeconds = 1.0,
         protected int $packetSizeInBytes = 56,
-        protected int $ttl = 64
+        protected int $ttl = 64,
     ) {}
 
     public function run(): PingResult
@@ -27,16 +27,16 @@ class Ping
             output: $combinedOutput,
             returnCode: $processResult->getExitCode(),
             host: $this->hostname,
-            timeout: $this->timeout,
-            interval: $this->interval,
+            timeout: $this->timeoutInSeconds,
+            interval: $this->intervalInSeconds,
             packetSize: $this->packetSizeInBytes,
             ttl: $this->ttl,
         );
     }
 
-    protected function executePingCommand(array $command)
+    protected function executePingCommand(array $command): Process
     {
-        $timeoutWithBuffer = $this->timeout + 2;
+        $timeoutWithBuffer = $this->timeoutInSeconds + 2;
 
         $process = new Process($command);
         $process->setTimeout($timeoutWithBuffer);
@@ -62,7 +62,7 @@ class Ping
 
     public function timeoutInSeconds(int $timeout): self
     {
-        $this->timeout = $timeout;
+        $this->timeoutInSeconds = $timeout;
 
         return $this;
     }
@@ -74,9 +74,9 @@ class Ping
         return $this;
     }
 
-    public function interval(float $interval): self
+    public function intervalInSeconds(float $interval): self
     {
-        $this->interval = $interval;
+        $this->intervalInSeconds = $interval;
 
         return $this;
     }
@@ -134,7 +134,7 @@ class Ping
         if ($this->isRunningOnMacOS()) {
             $this->currentCommand[] = (string) $this->convertTimeoutToMilliseconds();
         } else {
-            $this->currentCommand[] = (string) $this->timeout;
+            $this->currentCommand[] = (string) $this->timeoutInSeconds;
         }
 
         return $this;
@@ -144,7 +144,7 @@ class Ping
     {
         if ($this->isCustomInterval()) {
             $this->currentCommand[] = '-i';
-            $this->currentCommand[] = (string) $this->interval;
+            $this->currentCommand[] = (string) $this->intervalInSeconds;
         }
 
         return $this;
@@ -184,12 +184,12 @@ class Ping
 
     protected function convertTimeoutToMilliseconds(): int
     {
-        return $this->timeout * 1000;
+        return $this->timeoutInSeconds * 1000;
     }
 
     protected function isCustomInterval(): bool
     {
-        return $this->interval !== 1.0;
+        return $this->intervalInSeconds !== 1.0;
     }
 
     protected function isCustomPacketSize(): bool

@@ -9,7 +9,7 @@ use Spatie\Ping\PingResult;
 use Spatie\Ping\PingResultLine;
 
 it('can perform a successful ping check', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 3);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 3);
 
     $result = $checker->run();
 
@@ -21,7 +21,7 @@ it('can perform a successful ping check', function () {
 })->skipOnGitHubActions();
 
 it('can handle failed ping to non-existent host', function () {
-    $checker = new Ping('non-existent-host-12345.invalid', timeout: 2, count: 1);
+    $checker = new Ping('non-existent-host-12345.invalid', timeoutInSeconds: 2, count: 1);
 
     $result = $checker->run();
 
@@ -33,7 +33,7 @@ it('can handle failed ping to non-existent host', function () {
 })->skipOnGitHubActions();
 
 it('can parse ping result with multiple packets', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 4);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 4);
 
     $result = $checker->run();
 
@@ -48,7 +48,7 @@ it('can parse ping result with multiple packets', function () {
 })->skipOnGitHubActions();
 
 it('can extract packet statistics', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 3);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 3);
 
     $result = $checker->run();
 
@@ -64,7 +64,7 @@ it('can extract packet statistics', function () {
 })->skipOnGitHubActions();
 
 it('can convert result to array', function () {
-    $checker = new Ping('8.8.8.8', timeout: 3, count: 2, interval: 1.5, packetSizeInBytes: 64, ttl: 32);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 3, count: 2, intervalInSeconds: 1.5, packetSizeInBytes: 64, ttl: 32);
 
     $result = $checker->run();
     $array = $result->toArray();
@@ -98,7 +98,7 @@ it('can convert result to array', function () {
 })->skipOnGitHubActions();
 
 it('handles timeout correctly', function () {
-    $checker = new Ping('192.0.2.1', timeout: 2, count: 1); // Use TEST-NET-1 address
+    $checker = new Ping('192.0.2.1', timeoutInSeconds: 2, count: 1); // Use TEST-NET-1 address
 
     $result = $checker->run();
 
@@ -181,7 +181,7 @@ it('prefers average time over calculated time from lines', function () {
 });
 
 it('can perform ping check with custom interval', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 3, interval: 0.5);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 3, intervalInSeconds: 0.5);
 
     $result = $checker->run();
 
@@ -193,7 +193,7 @@ it('can perform ping check with custom interval', function () {
 })->skipOnGitHubActions();
 
 it('builds ping command with interval correctly', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, interval: 1.5);
+    $checker = new Ping('example.com', timeoutInSeconds: 5, count: 2, intervalInSeconds: 1.5);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -207,7 +207,7 @@ it('builds ping command with interval correctly', function () {
 });
 
 it('can perform ping check with custom packet size', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 2, packetSizeInBytes: 64);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 2, packetSizeInBytes: 64);
 
     $result = $checker->run();
 
@@ -219,7 +219,7 @@ it('can perform ping check with custom packet size', function () {
 })->skipOnGitHubActions();
 
 it('builds ping command with packet size correctly', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, packetSizeInBytes: 128);
+    $checker = new Ping('example.com', timeoutInSeconds: 5, count: 2, packetSizeInBytes: 128);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -233,7 +233,7 @@ it('builds ping command with packet size correctly', function () {
 });
 
 it('builds ping command with both interval and packet size', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, interval: 0.5, packetSizeInBytes: 256);
+    $checker = new Ping('example.com', timeoutInSeconds: 5, count: 2, intervalInSeconds: 0.5, packetSizeInBytes: 256);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -249,7 +249,7 @@ it('builds ping command with both interval and packet size', function () {
 });
 
 it('can perform ping check with custom TTL', function () {
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 2, ttl: 64);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 2, ttl: 64);
 
     $result = $checker->run();
 
@@ -261,7 +261,7 @@ it('can perform ping check with custom TTL', function () {
 })->skipOnGitHubActions();
 
 it('builds ping command with TTL correctly', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 2, ttl: 32);
+    $checker = new Ping('example.com', timeoutInSeconds: 5, count: 2, ttl: 32);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -275,7 +275,7 @@ it('builds ping command with TTL correctly', function () {
 });
 
 it('builds ping command with all options', function () {
-    $checker = new Ping('example.com', timeout: 5, count: 3, interval: 0.2, packetSizeInBytes: 512, ttl: 128);
+    $checker = new Ping('example.com', timeoutInSeconds: 5, count: 3, intervalInSeconds: 0.2, packetSizeInBytes: 512, ttl: 128);
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
@@ -294,7 +294,7 @@ it('builds ping command with all options', function () {
 
 it('can create PingResult from toArray output with real ping data', function () {
     // Execute a real ping to get actual data
-    $checker = new Ping('8.8.8.8', timeout: 5, count: 3);
+    $checker = new Ping('8.8.8.8', timeoutInSeconds: 5, count: 3);
     $originalResult = $checker->run();
     $originalArray = $originalResult->toArray();
 
@@ -336,7 +336,7 @@ it('can create PingResult from toArray output with real ping data', function () 
 
 it('can create PingResult from toArray output with failed ping (unknown hostname)', function () {
     // Execute a real ping to an unknown hostname to get actual failure data
-    $checker = new Ping('non-existent-host-12345.invalid', timeout: 2, count: 1);
+    $checker = new Ping('non-existent-host-12345.invalid', timeoutInSeconds: 2, count: 1);
     $originalResult = $checker->run();
     $originalArray = $originalResult->toArray();
 
@@ -393,7 +393,7 @@ it('can use setter methods to configure ping options', function () {
     // Use fluent interface to configure all options
     $checker->timeoutInSeconds(10)
         ->count(2)
-        ->interval(0.5)
+        ->intervalInSeconds(0.5)
         ->packetSizeInBytes(128)
         ->ttl(32);
 

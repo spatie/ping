@@ -19,9 +19,9 @@ class PingResult implements Stringable
 
     protected ?int $numberOfPacketsReceived = null;
 
-    protected ?int $timeout = null;
+    protected ?int $timeoutInSeconds = null;
 
-    protected float $interval = 1.0;
+    protected float $intervalInSeconds = 1.0;
 
     protected int $packetSizeInBytes = 56;
 
@@ -54,8 +54,8 @@ class PingResult implements Stringable
         $result = new self;
         $result->raw = $outputString;
         $result->host = $host;
-        $result->timeout = $timeout;
-        $result->interval = $interval;
+        $result->timeoutInSeconds = $timeout;
+        $result->intervalInSeconds = $interval;
         $result->packetSizeInBytes = $packetSize;
         $result->ttl = $ttl;
 
@@ -87,8 +87,8 @@ class PingResult implements Stringable
         $result->numberOfPacketsTransmitted = $data['packets_transmitted'] ?? null;
         $result->numberOfPacketsReceived = $data['packets_received'] ?? null;
 
-        $result->timeout = $data['options']['timeout_in_seconds'] ?? null;
-        $result->interval = $data['options']['interval'] ?? 1.0;
+        $result->timeoutInSeconds = $data['options']['timeout_in_seconds'] ?? null;
+        $result->intervalInSeconds = $data['options']['interval'] ?? 1.0;
         $result->packetSizeInBytes = $data['options']['packet_size_in_bytes'] ?? 56;
         $result->ttl = $data['options']['ttl'] ?? 64;
 
@@ -190,7 +190,7 @@ class PingResult implements Stringable
 
     public function timeoutInSeconds(): ?int
     {
-        return $this->timeout;
+        return $this->timeoutInSeconds;
     }
 
     protected static function determineErrorFromOutput(string $output): PingError
@@ -327,7 +327,7 @@ class PingResult implements Stringable
             'packets_received' => $this->packetsReceived(),
             'options' => [
                 'timeout_in_seconds' => $this->timeoutInSeconds(),
-                'interval' => $this->interval,
+                'interval' => $this->intervalInSeconds,
                 'packet_size_in_bytes' => $this->packetSizeInBytes,
                 'ttl' => $this->ttl,
             ],

@@ -71,9 +71,9 @@ You can customize the ping behavior using constructor parameters:
 ```php
 $result = (new Ping(
     hostname: '8.8.8.8',
-    timeout: 5,      // seconds
+    timeoutInSeconds: 5,      // seconds
     count: 3,        // number of packets
-    interval: 1.0,   // seconds between packets
+    intervalInSeconds: 1.0,   // seconds between packets
     packetSizeInBytes: 64, // how big the packet is we'll send to the server
     ttl: 64          // time to live (maximum number of hops)
 ))->run();
@@ -85,7 +85,7 @@ Or use the fluent interface:
 $result = (new Ping('8.8.8.8'))
     ->timeoutInSeconds(10)
     ->count(5)
-    ->interval(0.5)
+    ->intervalInSeconds(0.5)
     ->packetSizeInBytes(128)
     ->ttl(32)
     ->run();
