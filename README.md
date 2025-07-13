@@ -71,11 +71,11 @@ You can customize the ping behavior using constructor parameters:
 ```php
 $result = (new Ping(
     hostname: '8.8.8.8',
-    timeoutInSeconds: 5,      // seconds
-    count: 3,        // number of packets
-    intervalInSeconds: 1.0,   // seconds between packets
-    packetSizeInBytes: 64, // how big the packet is we'll send to the server
-    ttl: 64          // time to live (maximum number of hops)
+    timeoutInSeconds: 5,     // seconds
+    count: 3,                // number of packets
+    intervalInSeconds: 1.0,  // seconds between packets
+    packetSizeInBytes: 64,   // how big the packet is we'll send to the server
+    ttl: 64                  // time to live (maximum number of hops)
 ))->run();
 ```
 
@@ -90,13 +90,6 @@ $result = (new Ping('8.8.8.8'))
     ->ttl(32)
     ->run();
 ```
-
-#### Platform-specific considerations
-
-**Interval limitations:**
-- **macOS**: Supports fractional intervals (e.g., `0.5` seconds), but values less than 1 second may require root privileges
-- **Linux**: Most distributions require integer intervals for non-root users. Fractional intervals typically need root privileges
-- **Recommendation**: Use intervals ≥ 1.0 seconds for cross-platform compatibility, or ensure your application runs with appropriate privileges for sub-second intervals
 
 ### Working with results
 
