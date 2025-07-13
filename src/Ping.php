@@ -36,13 +36,18 @@ class Ping
 
     protected function executePingCommand(array $command): Process
     {
-        $timeoutWithBuffer = $this->timeoutInSeconds + 2;
-
         $process = new Process($command);
-        $process->setTimeout($timeoutWithBuffer);
+        $process->setTimeout($this->calculateProcessTimeout());
         $process->run();
 
         return $process;
+    }
+
+    protected function calculateProcessTimeout(): int
+    {
+        $totalPingTime = $this->count * ($this->timeoutInSeconds + $this->intervalInSeconds);
+        
+        return (int) ceil($totalPingTime) + 5;
     }
 
     protected function combineOutputLines($processResult): array
