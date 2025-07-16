@@ -35,7 +35,7 @@ class PingResult implements Stringable
 
     protected ?float $standardDeviationTimeInMs = null;
 
-    public string $raw = '';
+    protected string $rawOutput = '';
 
     /** @var array<int, \Spatie\Ping\PingResultLine> */
     protected array $lines = [];
@@ -52,7 +52,7 @@ class PingResult implements Stringable
         $outputString = implode("\n", $output);
 
         $result = new self;
-        $result->raw = $outputString;
+        $result->rawOutput = $outputString;
         $result->host = $host;
         $result->timeoutInSeconds = $timeout;
         $result->intervalInSeconds = $interval;
@@ -97,13 +97,18 @@ class PingResult implements Stringable
         $result->averageTimeInMs = $data['timings']['average_time_in_ms'] ?? null;
         $result->standardDeviationTimeInMs = $data['timings']['standard_deviation_time_in_ms'] ?? null;
 
-        $result->raw = $data['raw_output'] ?? '';
+        $result->rawOutput = $data['raw_output'] ?? '';
         $result->lines = array_map(
             fn ($lineData) => PingResultLine::fromLine($lineData['line']),
             $data['lines'] ?? []
         );
 
         return $result;
+    }
+
+    public function rawOutput(): string
+    {
+        return $this->rawOutput;
     }
 
     /**
@@ -337,13 +342,13 @@ class PingResult implements Stringable
                 'average_time_in_ms' => $this->averageTimeInMs(),
                 'standard_deviation_time_in_ms' => $this->standardDeviationTimeInMs(),
             ],
-            'raw_output' => $this->raw,
+            'raw_output' => $this->rawOutput,
             'lines' => array_map(fn ($line) => $line->toArray(), $this->lines()),
         ];
     }
 
     public function __toString(): string
     {
-        return $this->raw;
+        return $this->rawOutput;
     }
 }

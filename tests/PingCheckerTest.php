@@ -17,7 +17,7 @@ it('can perform a successful ping check', function () {
     expect($result->isSuccess())->toBeTrue();
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
-    expect($result->raw)->toContain('8.8.8.8');
+    expect($result->rawOutput())->toContain('8.8.8.8');
 })->skipOnGitHubActions();
 
 it('can handle failed ping to non-existent host', function () {
@@ -189,7 +189,7 @@ it('can perform ping check with custom interval', function () {
     expect($result->isSuccess())->toBeTrue();
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
-    expect($result->raw)->toContain('8.8.8.8');
+    expect($result->rawOutput())->toContain('8.8.8.8');
 })->skipOnGitHubActions();
 
 it('builds ping command with interval correctly', function () {
@@ -215,7 +215,7 @@ it('can perform ping check with custom packet size', function () {
     expect($result->isSuccess())->toBeTrue();
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
-    expect($result->raw)->toContain('8.8.8.8');
+    expect($result->rawOutput())->toContain('8.8.8.8');
 })->skipOnGitHubActions();
 
 it('builds ping command with packet size correctly', function () {
@@ -257,7 +257,7 @@ it('can perform ping check with custom TTL', function () {
     expect($result->isSuccess())->toBeTrue();
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
-    expect($result->raw)->toContain('8.8.8.8');
+    expect($result->rawOutput())->toContain('8.8.8.8');
 })->skipOnGitHubActions();
 
 it('builds ping command with TTL correctly', function () {
