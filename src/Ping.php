@@ -46,7 +46,7 @@ class Ping
     protected function calculateProcessTimeout(): int
     {
         $totalPingTime = $this->count * ($this->timeoutInSeconds + $this->intervalInSeconds);
-        
+
         return (int) ceil($totalPingTime) + 5;
     }
 
