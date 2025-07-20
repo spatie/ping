@@ -15,6 +15,7 @@ class Ping
         protected float $intervalInSeconds = 1.0,
         protected int $packetSizeInBytes = 56,
         protected int $ttl = 64,
+        protected bool $showLostPackets = true,
     ) {}
 
     public function run(): PingResult
@@ -100,6 +101,13 @@ class Ping
         return $this;
     }
 
+    public function showLostPackets(bool $showLostPackets = true): self
+    {
+        $this->showLostPackets = $showLostPackets;
+
+        return $this;
+    }
+
     protected function buildPingCommand(): array
     {
         return $this->startWithPingCommand()
@@ -108,6 +116,7 @@ class Ping
             ->addOptionalIntervalOption()
             ->addOptionalPacketSizeOption()
             ->addOptionalTtlOption()
+            ->addOptionalShowLostPacketsOption()
             ->addTargetHostname()
             ->getCommand();
     }
@@ -205,5 +214,14 @@ class Ping
     protected function isCustomTtl(): bool
     {
         return $this->ttl !== 64;
+    }
+
+    protected function addOptionalShowLostPacketsOption(): self
+    {
+        if ($this->showLostPackets && !$this->isRunningOnMacOS()) {
+            $this->currentCommand[] = '-O';
+        }
+
+        return $this;
     }
 }

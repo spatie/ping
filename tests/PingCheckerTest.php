@@ -409,3 +409,52 @@ it('can use setter methods to configure ping options', function () {
     expect($array['options']['packet_size_in_bytes'])->toBe(128);
     expect($array['options']['ttl'])->toBe(32);
 })->skipOnGitHubActions();
+
+it('can use showLostPackets setter method', function () {
+    $checker = new Ping('8.8.8.8');
+
+    // Use fluent interface to configure showLostPackets
+    $checker->showLostPackets(false);
+
+    expect($checker)->toBeInstanceOf(Ping::class);
+});
+
+it('builds ping command with showLostPackets option on Linux', function () {
+    $checker = new Ping('example.com', showLostPackets: true);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('buildPingCommand');
+    $method->setAccessible(true);
+
+    $command = $method->invoke($checker);
+
+    if (PHP_OS_FAMILY !== 'Darwin') {
+        expect($command)->toContain('-O');
+    } else {
+        expect($command)->not()->toContain('-O');
+    }
+    expect($command)->toContain('example.com');
+});
+
+it('does not include showLostPackets option when disabled', function () {
+    $checker = new Ping('example.com', showLostPackets: false);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('buildPingCommand');
+    $method->setAccessible(true);
+
+    $command = $method->invoke($checker);
+
+    expect($command)->not()->toContain('-O');
+    expect($command)->toContain('example.com');
+});
+
+it('showLostPackets is enabled by default', function () {
+    $checker = new Ping('example.com');
+
+    $reflection = new ReflectionClass($checker);
+    $property = $reflection->getProperty('showLostPackets');
+    $property->setAccessible(true);
+
+    expect($property->getValue($checker))->toBeTrue();
+});

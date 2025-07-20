@@ -75,7 +75,8 @@ $result = (new Ping(
     count: 3,                // number of packets
     intervalInSeconds: 1.0,  // seconds between packets
     packetSizeInBytes: 64,   // how big the packet is we'll send to the server
-    ttl: 64                  // time to live (maximum number of hops)
+    ttl: 64,                 // time to live (maximum number of hops)
+    showLostPackets: true    // report outstanding replies (Linux only, enabled by default)
 ))->run();
 ```
 
@@ -88,8 +89,57 @@ $result = (new Ping('8.8.8.8'))
     ->intervalInSeconds(0.5)
     ->packetSizeInBytes(128)
     ->ttl(32)
+    ->showLostPackets(false)
     ->run();
 ```
+
+### Lost packet reporting
+
+The `showLostPackets` option enables the `-O` flag on Linux systems, which reports outstanding ICMP ECHO replies before sending the next packet. This is useful for diagnostic purposes and logging when investigating network connectivity issues:
+
+```php
+// Enabled by default on Linux (ignored on macOS)
+$result = (new Ping('8.8.8.8'))->run();
+
+// Explicitly disable
+$result = (new Ping('8.8.8.8'))
+    ->showLostPackets(false)
+    ->run();
+
+// Explicitly enable  
+$result = (new Ping('8.8.8.8'))
+    ->showLostPackets(true)
+    ->run();
+```
+
+#### Output example
+
+With `showLostPackets: true` (default), the raw output will include notifications about missing replies:
+
+```
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=15.2 ms
+no answer yet for icmp_seq=2
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=12.8 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=45.1 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss
+```
+
+With `showLostPackets: false`, only successful replies are shown:
+
+```
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=15.2 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=12.8 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=45.1 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss
+```
+
+Note: This option only works on Linux systems and is automatically ignored on macOS.
 
 ### Working with results
 
