@@ -135,7 +135,12 @@ class Ping
 
     protected function addPacketCountOption(): self
     {
-        $this->currentCommand[] = '-c';
+        if ($this->isRunningOnWinOS()) {
+            $this->currentCommand[] = '-n';
+        } else {
+            $this->currentCommand[] = '-c';
+        }
+
         $this->currentCommand[] = (string) $this->count;
 
         return $this;
@@ -143,7 +148,11 @@ class Ping
 
     protected function addTimeoutOption(): self
     {
-        $this->currentCommand[] = '-W';
+        if ($this->isRunningOnWinOS()) {
+            $this->currentCommand[] = '-w';
+        } else {
+            $this->currentCommand[] = '-W';
+        }
 
         if ($this->isRunningOnMacOS()) {
             $this->currentCommand[] = (string) $this->convertTimeoutToMilliseconds();
@@ -156,6 +165,10 @@ class Ping
 
     protected function addOptionalIntervalOption(): self
     {
+        if ($this->isRunningOnWinOS()) {
+            return $this;
+        }
+
         if ($this->isCustomInterval()) {
             $this->currentCommand[] = '-i';
             $this->currentCommand[] = (string) $this->intervalInSeconds;
@@ -167,7 +180,12 @@ class Ping
     protected function addOptionalPacketSizeOption(): self
     {
         if ($this->isCustomPacketSize()) {
-            $this->currentCommand[] = '-s';
+            if ($this->isRunningOnWinOS()) {
+                $this->currentCommand[] = '-l';
+            } else {
+                $this->currentCommand[] = '-s';
+            }
+
             $this->currentCommand[] = (string) $this->packetSizeInBytes;
         }
 
@@ -177,7 +195,12 @@ class Ping
     protected function addOptionalTtlOption(): self
     {
         if ($this->isCustomTtl()) {
-            $this->currentCommand[] = '-t';
+            if ($this->isRunningOnWinOS()) {
+                $this->currentCommand[] = '-i';
+            } else {
+                $this->currentCommand[] = '-t';
+            }
+
             $this->currentCommand[] = (string) $this->ttl;
         }
 
@@ -194,6 +217,11 @@ class Ping
     protected function isRunningOnMacOS(): bool
     {
         return PHP_OS_FAMILY === 'Darwin';
+    }
+
+    protected function isRunningOnWinOS(): bool
+    {
+        return PHP_OS_FAMILY === 'Windows';
     }
 
     protected function convertTimeoutToMilliseconds(): int
