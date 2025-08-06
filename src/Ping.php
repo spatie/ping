@@ -135,7 +135,7 @@ class Ping
 
     protected function addPacketCountOption(): self
     {
-        $this->currentCommand[] = '-c';
+        $this->currentCommand[] = PHP_OS_FAMILY === 'Windows' ? '-n' : '-c';
         $this->currentCommand[] = (string) $this->count;
 
         return $this;
