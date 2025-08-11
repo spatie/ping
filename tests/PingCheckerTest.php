@@ -450,11 +450,11 @@ function hasIPv6Support(): bool
 
     // Try a quick test ping to see if IPv6 localhost responds
     try {
-        $testPing = new \Spatie\Ping\Ping('::1', timeoutInSeconds: 1, count: 1);
+        $testPing = new Ping('::1', timeoutInSeconds: 1, count: 1);
         $result = $testPing->run();
 
         // If ping succeeds or fails with anything other than hostname not found, IPv6 is available
-        return $result->isSuccess() || $result->error() !== \Spatie\Ping\Enums\PingError::HostnameNotFound;
+        return $result->isSuccess() || $result->error() !== PingError::HostnameNotFound;
     } catch (Exception $e) {
         return false;
     }
@@ -627,10 +627,12 @@ it('can distinguish between IPv4 and IPv6 address formats', function (string $ho
     // Basic format validation
     if ($expectedType === 'IPv6') {
         expect($host)->toContain(':');
-        expect($host)->not()->toMatch('/^\d+\.\d+\.\d+\.\d+$/');
+        expect((bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))->toBeTrue();
+        expect((bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))->toBeFalse();
     } else {
         expect($host)->toContain('.');
-        expect($host)->toMatch('/^\d+\.\d+\.\d+\.\d+$/');
+        expect((bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))->toBeTrue();
+        expect((bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))->toBeFalse();
     }
 
     $result = $checker->run();
