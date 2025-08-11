@@ -443,11 +443,6 @@ it('can detect IPv6 support on system', function () {
 // Helper function to check if system has IPv6 support
 function hasIPv6Support(): bool
 {
-    // Allow explicit disabling via environment variable
-    if (getenv('DISABLE_IPV6_TESTS')) {
-        return false;
-    }
-
     // Try a quick test ping to see if IPv6 localhost responds
     try {
         $testPing = new Ping('::1', timeoutInSeconds: 1, count: 1);
