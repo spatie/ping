@@ -2,6 +2,14 @@
 
 All notable changes to `ping` will be documented in this file.
 
+## 1.1.1 - 2025-08-12
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/spatie/ping/pull/3
+
+**Full Changelog**: https://github.com/spatie/ping/compare/1.1.0...1.1.1
+
 ## 1.1.0 - 2025-07-20
 
 **Full Changelog**: https://github.com/spatie/ping/compare/1.0.1...1.1.0
