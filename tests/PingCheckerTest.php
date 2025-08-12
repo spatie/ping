@@ -458,3 +458,15 @@ it('showLostPackets is enabled by default', function () {
 
     expect($property->getValue($checker))->toBeTrue();
 });
+
+it('can ping a ipv6 address', function () {
+    $checker = new Ping('2001:4860:4860::8888');
+
+    $result = $checker->run();
+
+    expect($result)->toBeInstanceOf(PingResult::class);
+    expect($result->isSuccess())->toBeTrue();
+    expect($result->packetLossPercentage())->toBeLessThan(100);
+    expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
+    expect($result->rawOutput())->toContain('2001:4860:4860::8888');
+});
