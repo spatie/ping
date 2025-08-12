@@ -2,6 +2,10 @@
 
 All notable changes to `ping` will be documented in this file.
 
+## 1.1.0 - 2025-07-20
+
+**Full Changelog**: https://github.com/spatie/ping/compare/1.0.1...1.1.0
+
 ## 1.0.1 - 2025-07-16
 
 **Full Changelog**: https://github.com/spatie/ping/compare/0.0.6...1.0.1

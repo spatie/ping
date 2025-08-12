@@ -218,7 +218,7 @@ class Ping
 
     protected function addOptionalShowLostPacketsOption(): self
     {
-        if ($this->showLostPackets && !$this->isRunningOnMacOS()) {
+        if ($this->showLostPackets && ! $this->isRunningOnMacOS()) {
             $this->currentCommand[] = '-O';
         }
 
