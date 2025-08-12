@@ -469,4 +469,4 @@ it('can ping a ipv6 address', function () {
     expect($result->packetLossPercentage())->toBeLessThan(100);
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->rawOutput())->toContain('2001:4860:4860::8888');
-});
+})->whenIpv6Available();
