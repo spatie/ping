@@ -470,3 +470,94 @@ it('can ping a ipv6 address', function () {
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->rawOutput())->toContain('2001:4860:4860::8888');
 })->whenIpv6Available();
+
+it('calculates process timeout correctly for basic case', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 1, count: 1);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // For 1 packet: (1-1)*1 + 1*1 + max(10, 1*0.5) = 0 + 1 + 10 = 11
+    expect($timeout)->toBe(11);
+});
+
+it('calculates process timeout correctly for multiple packets with default interval', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 1, count: 5);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // For 5 packets: (5-1)*1 + 5*1 + max(10, 9*0.5) = 4 + 5 + 10 = 19
+    expect($timeout)->toBe(19);
+});
+
+it('calculates process timeout correctly for the failing example case', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 1, count: 5, intervalInSeconds: 1.0);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // Expected: (5-1)*1 + 5*1 + max(10, 9*0.5) = 4 + 5 + 10 = 19 seconds
+    expect($timeout)->toBe(19);
+});
+
+it('calculates process timeout with custom interval', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 2, count: 3, intervalInSeconds: 0.5);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // Expected: (3-1)*0.5 + 3*2 + max(10, 7*0.5) = 1 + 6 + 10 = 17
+    expect($timeout)->toBe(17);
+});
+
+it('calculates process timeout with large expected time uses percentage buffer', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 10, count: 10, intervalInSeconds: 2.0);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // Expected: (10-1)*2 + 10*10 + max(10, 118*0.5) = 18 + 100 + 59 = 177
+    expect($timeout)->toBe(177);
+});
+
+it('calculates process timeout uses minimum buffer of 10 seconds', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 1, count: 2, intervalInSeconds: 0.1);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // Expected: (2-1)*0.1 + 2*1 + max(10, 2.1*0.5) = 0.1 + 2 + 10 = 12.1, rounded up = 13
+    expect($timeout)->toBe(13);
+});
+
+it('calculates process timeout correctly for fast pings with short intervals', function () {
+    $checker = new Ping('example.com', timeoutInSeconds: 1, count: 4, intervalInSeconds: 0.2);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('calculateProcessTimeout');
+    $method->setAccessible(true);
+
+    $timeout = $method->invoke($checker);
+
+    // Expected: (4-1)*0.2 + 4*1 + max(10, 4.6*0.5) = 0.6 + 4 + max(10, 2.3) = 0.6 + 4 + 10 = 14.6, rounded up = 15
+    expect($timeout)->toBe(15);
+});
