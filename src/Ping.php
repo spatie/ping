@@ -46,9 +46,20 @@ class Ping
 
     protected function calculateProcessTimeout(): int
     {
-        $totalPingTime = $this->count * ($this->timeoutInSeconds + $this->intervalInSeconds);
+        // Time for intervals between packets (count - 1 intervals)
+        $intervalTime = ($this->count - 1) * $this->intervalInSeconds;
 
-        return (int) ceil($totalPingTime) + 5;
+        // Time waiting for responses (count * timeout per packet)
+        $responseTime = $this->count * $this->timeoutInSeconds;
+
+        // Total expected time
+        $totalPingTime = $intervalTime + $responseTime;
+
+        // Add generous buffer for network delays, DNS resolution, and process overhead
+        // Use minimum 10 seconds buffer, or 50% of expected time, whichever is larger
+        $bufferTime = max(10, $totalPingTime * 0.5);
+
+        return (int) ceil($totalPingTime + $bufferTime);
     }
 
     protected function combineOutputLines($processResult): array
