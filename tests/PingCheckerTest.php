@@ -470,3 +470,106 @@ it('can ping a ipv6 address', function () {
     expect($result->averageResponseTimeInMs())->toBeGreaterThan(0);
     expect($result->rawOutput())->toContain('2001:4860:4860::8888');
 })->whenIpv6Available();
+
+it('can force IPv4', function () {
+    $checker = (new Ping('google.com'))
+        ->ipVersion(\Spatie\Ping\Enums\IpVersion::IPv4);
+
+    $result = $checker->run();
+
+    expect($result)->toBeInstanceOf(PingResult::class);
+    expect($result->isSuccess())->toBeTrue();
+    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
+})->skipOnGitHubActions();
+
+it('can force IPv6', function () {
+    $checker = (new Ping('google.com'))
+        ->ipVersion(\Spatie\Ping\Enums\IpVersion::IPv6);
+
+    $result = $checker->run();
+
+    expect($result)->toBeInstanceOf(PingResult::class);
+    expect($result->isSuccess())->toBeTrue();
+    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
+})->whenIpv6Available();
+
+it('builds ping command with IPv4 flag', function () {
+    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv4);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('buildPingCommand');
+    $method->setAccessible(true);
+
+    $command = $method->invoke($checker);
+
+    expect($command)->toContain('-4');
+    expect($command)->toContain('example.com');
+});
+
+it('builds ping command with IPv6 flag', function () {
+    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv6);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('buildPingCommand');
+    $method->setAccessible(true);
+
+    $command = $method->invoke($checker);
+
+    expect($command)->toContain('-6');
+    expect($command)->toContain('example.com');
+});
+
+it('does not add IP version flag when set to Auto', function () {
+    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::Auto);
+
+    $reflection = new ReflectionClass($checker);
+    $method = $reflection->getMethod('buildPingCommand');
+    $method->setAccessible(true);
+
+    $command = $method->invoke($checker);
+
+    expect($command)->not()->toContain('-4');
+    expect($command)->not()->toContain('-6');
+    expect($command)->toContain('example.com');
+});
+
+it('includes ip_version in toArray output', function () {
+    $checker = new Ping('8.8.8.8', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv4);
+
+    $result = $checker->run();
+    $array = $result->toArray();
+
+    expect($array['options'])->toHaveKey('ip_version');
+    expect($array['options']['ip_version'])->toBe('ipv4');
+})->skipOnGitHubActions();
+
+it('can create PingResult from toArray with ip_version', function () {
+    $originalData = [
+        'success' => true,
+        'error' => null,
+        'host' => '8.8.8.8',
+        'packet_loss_percentage' => 0,
+        'packets_transmitted' => 3,
+        'packets_received' => 3,
+        'options' => [
+            'timeout_in_seconds' => 5,
+            'interval' => 1.0,
+            'packet_size_in_bytes' => 56,
+            'ttl' => 64,
+            'ip_version' => 'ipv6',
+        ],
+        'timings' => [
+            'minimum_time_in_ms' => 10.0,
+            'maximum_time_in_ms' => 20.0,
+            'average_time_in_ms' => 15.0,
+            'standard_deviation_time_in_ms' => 5.0,
+        ],
+        'raw_output' => 'test output',
+        'lines' => [],
+    ];
+
+    $result = PingResult::fromArray($originalData);
+
+    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
+    expect($result->toArray()['options']['ip_version'])->toBe('ipv6');
+});

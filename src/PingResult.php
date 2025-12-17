@@ -2,6 +2,7 @@
 
 namespace Spatie\Ping;
 
+use Spatie\Ping\Enums\IpVersion;
 use Spatie\Ping\Enums\PingError;
 use Stringable;
 
@@ -27,6 +28,8 @@ class PingResult implements Stringable
 
     protected int $ttl = 64;
 
+    protected IpVersion $ipVersion = IpVersion::Auto;
+
     protected ?float $minimumTimeInMs = null;
 
     protected ?float $maximumTimeInMs = null;
@@ -47,7 +50,8 @@ class PingResult implements Stringable
         int $timeout,
         float $interval = 1.0,
         int $packetSize = 56,
-        int $ttl = 64
+        int $ttl = 64,
+        IpVersion $ipVersion = IpVersion::Auto
     ): self {
         $outputString = implode("\n", $output);
 
@@ -58,6 +62,7 @@ class PingResult implements Stringable
         $result->intervalInSeconds = $interval;
         $result->packetSizeInBytes = $packetSize;
         $result->ttl = $ttl;
+        $result->ipVersion = $ipVersion;
 
         if ($returnCode !== 0) {
             $result->error = self::determineErrorFromOutput($outputString);
@@ -91,6 +96,9 @@ class PingResult implements Stringable
         $result->intervalInSeconds = $data['options']['interval'] ?? 1.0;
         $result->packetSizeInBytes = $data['options']['packet_size_in_bytes'] ?? 56;
         $result->ttl = $data['options']['ttl'] ?? 64;
+        $result->ipVersion = isset($data['options']['ip_version'])
+            ? IpVersion::from($data['options']['ip_version'])
+            : IpVersion::Auto;
 
         $result->minimumTimeInMs = $data['timings']['minimum_time_in_ms'] ?? null;
         $result->maximumTimeInMs = $data['timings']['maximum_time_in_ms'] ?? null;
@@ -196,6 +204,11 @@ class PingResult implements Stringable
     public function timeoutInSeconds(): ?int
     {
         return $this->timeoutInSeconds;
+    }
+
+    public function ipVersion(): IpVersion
+    {
+        return $this->ipVersion;
     }
 
     protected static function determineErrorFromOutput(string $output): PingError
@@ -335,6 +348,7 @@ class PingResult implements Stringable
                 'interval' => $this->intervalInSeconds,
                 'packet_size_in_bytes' => $this->packetSizeInBytes,
                 'ttl' => $this->ttl,
+                'ip_version' => $this->ipVersion->value,
             ],
             'timings' => [
                 'minimum_time_in_ms' => $this->minimumTimeInMs(),
