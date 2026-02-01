@@ -125,7 +125,7 @@ $result = (new Ping('google.com', ipVersion: IpVersion::IPv4))->run();
 The IP version used is included in the result:
 
 ```php
-$result = (new Ping('8.8.8.8', ipVersion: IpVersion::IPv4))->run();
+$result = (new Ping('google.com'))->run();
 
 echo $result->ipVersion()->value; // 'ipv4'
 ```

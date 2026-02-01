@@ -480,7 +480,7 @@ it('can force IPv4', function () {
     expect($result)->toBeInstanceOf(PingResult::class);
     expect($result->isSuccess())->toBeTrue();
     expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
-})->skipOnGitHubActions();
+});
 
 it('can force IPv6', function () {
     $checker = (new Ping('google.com'))
@@ -493,55 +493,21 @@ it('can force IPv6', function () {
     expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
 })->whenIpv6Available();
 
-it('builds ping command with IPv4 flag', function () {
-    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv4);
+it('uses IPv4 by default', function () {
+    $checker = new Ping('example.com');
 
-    $reflection = new ReflectionClass($checker);
-    $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
-
-    $command = $method->invoke($checker);
-
-    expect($command)->toContain('-4');
-    expect($command)->toContain('example.com');
-});
-
-it('builds ping command with IPv6 flag', function () {
-    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv6);
-
-    $reflection = new ReflectionClass($checker);
-    $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
-
-    $command = $method->invoke($checker);
-
-    expect($command)->toContain('-6');
-    expect($command)->toContain('example.com');
-});
-
-it('does not add IP version flag when set to Auto', function () {
-    $checker = new Ping('example.com', ipVersion: \Spatie\Ping\Enums\IpVersion::Auto);
-
-    $reflection = new ReflectionClass($checker);
-    $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
-
-    $command = $method->invoke($checker);
-
-    expect($command)->not()->toContain('-4');
-    expect($command)->not()->toContain('-6');
-    expect($command)->toContain('example.com');
+    expect($checker->run()->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
 });
 
 it('includes ip_version in toArray output', function () {
-    $checker = new Ping('8.8.8.8', ipVersion: \Spatie\Ping\Enums\IpVersion::IPv4);
+    $checker = new Ping('8.8.8.8');
 
     $result = $checker->run();
     $array = $result->toArray();
 
     expect($array['options'])->toHaveKey('ip_version');
     expect($array['options']['ip_version'])->toBe('ipv4');
-})->skipOnGitHubActions();
+});
 
 it('can create PingResult from toArray with ip_version', function () {
     $originalData = [
