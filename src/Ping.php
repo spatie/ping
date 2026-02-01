@@ -2,6 +2,7 @@
 
 namespace Spatie\Ping;
 
+use Spatie\Ping\Enums\IpVersion;
 use Symfony\Component\Process\Process;
 
 class Ping
@@ -16,6 +17,7 @@ class Ping
         protected int $packetSizeInBytes = 56,
         protected int $ttl = 64,
         protected bool $showLostPackets = true,
+        protected IpVersion $ipVersion = IpVersion::IPv4,
     ) {}
 
     public function run(): PingResult
@@ -32,6 +34,7 @@ class Ping
             interval: $this->intervalInSeconds,
             packetSize: $this->packetSizeInBytes,
             ttl: $this->ttl,
+            ipVersion: $this->ipVersion,
         );
     }
 
@@ -108,9 +111,17 @@ class Ping
         return $this;
     }
 
+    public function ipVersion(IpVersion $ipVersion): self
+    {
+        $this->ipVersion = $ipVersion;
+
+        return $this;
+    }
+
     protected function buildPingCommand(): array
     {
         return $this->startWithPingCommand()
+            ->addIpVersionOption()
             ->addPacketCountOption()
             ->addTimeoutOption()
             ->addOptionalIntervalOption()
@@ -131,6 +142,21 @@ class Ping
     protected function getCommand(): array
     {
         return $this->currentCommand;
+    }
+
+    protected function addIpVersionOption(): self
+    {
+        $flag = match ($this->ipVersion) {
+            IpVersion::IPv4 => '-4',
+            IpVersion::IPv6 => '-6',
+            IpVersion::Auto => null,
+        };
+
+        if ($flag !== null) {
+            $this->currentCommand[] = $flag;
+        }
+
+        return $this;
     }
 
     protected function addPacketCountOption(): self

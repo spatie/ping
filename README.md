@@ -93,6 +93,43 @@ $result = (new Ping('8.8.8.8'))
     ->run();
 ```
 
+### IPv4 and IPv6 support
+
+By default, pings use IPv4. You can change this using the `ipVersion` option:
+
+```php
+use Spatie\Ping\Enums\IpVersion;
+
+// IPv4 (default)
+$result = (new Ping('google.com'))->run();
+
+// Force IPv6
+$result = (new Ping('google.com'))
+    ->ipVersion(IpVersion::IPv6)
+    ->run();
+
+// Auto-detect based on hostname
+$result = (new Ping('google.com'))
+    ->ipVersion(IpVersion::Auto)
+    ->run();
+```
+
+You can also set the IP version in the constructor:
+
+```php
+use Spatie\Ping\Enums\IpVersion;
+
+$result = (new Ping('google.com', ipVersion: IpVersion::IPv4))->run();
+```
+
+The IP version used is included in the result:
+
+```php
+$result = (new Ping('google.com'))->run();
+
+echo $result->ipVersion()->value; // 'ipv4'
+```
+
 ### Lost packet reporting
 
 The `showLostPackets` option enables the `-O` flag on Linux systems, which reports outstanding ICMP ECHO replies before sending the next packet. This is useful for diagnostic purposes and logging when investigating network connectivity issues:
