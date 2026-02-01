@@ -28,7 +28,7 @@ class PingResult implements Stringable
 
     protected int $ttl = 64;
 
-    protected IpVersion $ipVersion = IpVersion::Auto;
+    protected IpVersion $ipVersion = IpVersion::IPv4;
 
     protected ?float $minimumTimeInMs = null;
 
@@ -51,7 +51,7 @@ class PingResult implements Stringable
         float $interval = 1.0,
         int $packetSize = 56,
         int $ttl = 64,
-        IpVersion $ipVersion = IpVersion::Auto
+        IpVersion $ipVersion = IpVersion::IPv4
     ): self {
         $outputString = implode("\n", $output);
 
@@ -98,7 +98,7 @@ class PingResult implements Stringable
         $result->ttl = $data['options']['ttl'] ?? 64;
         $result->ipVersion = isset($data['options']['ip_version'])
             ? IpVersion::from($data['options']['ip_version'])
-            : IpVersion::Auto;
+            : IpVersion::IPv4;
 
         $result->minimumTimeInMs = $data['timings']['minimum_time_in_ms'] ?? null;
         $result->maximumTimeInMs = $data['timings']['maximum_time_in_ms'] ?? null;

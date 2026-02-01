@@ -17,7 +17,7 @@ class Ping
         protected int $packetSizeInBytes = 56,
         protected int $ttl = 64,
         protected bool $showLostPackets = true,
-        protected IpVersion $ipVersion = IpVersion::Auto,
+        protected IpVersion $ipVersion = IpVersion::IPv4,
     ) {}
 
     public function run(): PingResult
