@@ -472,7 +472,7 @@ it('can force IPv4', function () {
     expect($result)->toBeInstanceOf(PingResult::class);
     expect($result->isSuccess())->toBeTrue();
     expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
-});
+})->skipOnGitHubActions();
 
 it('can force IPv6', function () {
     $checker = (new Ping('google.com'))
@@ -489,7 +489,7 @@ it('uses IPv4 by default', function () {
     $checker = new Ping('example.com');
 
     expect($checker->run()->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
-});
+})->skipOnGitHubActions();
 
 it('includes ip_version in toArray output', function () {
     $checker = new Ping('8.8.8.8');
@@ -499,7 +499,7 @@ it('includes ip_version in toArray output', function () {
 
     expect($array['options'])->toHaveKey('ip_version');
     expect($array['options']['ip_version'])->toBe('ipv4');
-});
+})->skipOnGitHubActions();
 
 it('can create PingResult from toArray with ip_version', function () {
     $originalData = [
