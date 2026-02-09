@@ -2,6 +2,21 @@
 
 All notable changes to `ping` will be documented in this file.
 
+## 1.2.1 - 2026-02-09
+
+### What's Changed
+
+#### Bug Fixes
+
+- Fix macOS ping by skipping `-4`/`-6` flags (not supported by macOS `ping` command)
+
+#### Maintenance
+
+- Upgrade pestphp/pest from ^3.0 to ^4.3
+- Remove deprecated `setAccessible()` calls in tests (PHP 8.5)
+- Add PHP 8.5 to CI test matrix
+- Add `skipOnGitHubActions` to tests that perform real pings
+
 ## 1.2.0 - 2026-02-01
 
 ### What's Changed
