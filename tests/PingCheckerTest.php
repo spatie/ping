@@ -197,7 +197,6 @@ it('builds ping command with interval correctly', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -223,7 +222,6 @@ it('builds ping command with packet size correctly', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -237,7 +235,6 @@ it('builds ping command with both interval and packet size', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -265,7 +262,6 @@ it('builds ping command with TTL correctly', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -279,7 +275,6 @@ it('builds ping command with all options', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -424,7 +419,6 @@ it('builds ping command with showLostPackets option on Linux', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -441,7 +435,6 @@ it('does not include showLostPackets option when disabled', function () {
 
     $reflection = new ReflectionClass($checker);
     $method = $reflection->getMethod('buildPingCommand');
-    $method->setAccessible(true);
 
     $command = $method->invoke($checker);
 
@@ -454,7 +447,6 @@ it('showLostPackets is enabled by default', function () {
 
     $reflection = new ReflectionClass($checker);
     $property = $reflection->getProperty('showLostPackets');
-    $property->setAccessible(true);
 
     expect($property->getValue($checker))->toBeTrue();
 });
