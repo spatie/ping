@@ -146,6 +146,10 @@ class Ping
 
     protected function addIpVersionOption(): self
     {
+        if ($this->isRunningOnMacOS()) {
+            return $this;
+        }
+
         $flag = match ($this->ipVersion) {
             IpVersion::IPv4 => '-4',
             IpVersion::IPv6 => '-6',
