@@ -219,7 +219,8 @@ class PingResult implements Stringable
             return PingError::HostnameNotFound;
         }
 
-        if (str_contains($output, 'no route to host') || str_contains($output, 'host unreachable')) {
+        if (str_contains($output, 'no route to host')
+            || preg_match('/(?:destination\\s+)?(?:net|port|host)\\s+unreachable/', $output) === 1) {
             return PingError::HostUnreachable;
         }
 
@@ -227,7 +228,9 @@ class PingResult implements Stringable
             return PingError::PermissionDenied;
         }
 
-        if (str_contains($output, 'timeout') || str_contains($output, 'timed out')) {
+        if (str_contains($output, 'timeout')
+            || str_contains($output, 'timed out')
+            || str_contains($output, 'no answer yet for icmp_seq')) {
             return PingError::Timeout;
         }
 
