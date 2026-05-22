@@ -220,7 +220,7 @@ class PingResult implements Stringable
         }
 
         if (str_contains($output, 'no route to host')
-            || preg_match('/(?:destination\\s+)?(?:net|port|host)\\s+unreachable/', $output) === 1) {
+            || preg_match('/(?:destination\s+)?(?:net|port|host)\s+unreachable/', $output) === 1) {
             return PingError::HostUnreachable;
         }
 
