@@ -531,3 +531,28 @@ it('can create PingResult from toArray with ip_version', function () {
     expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
     expect($result->toArray()['options']['ip_version'])->toBe('ipv6');
 });
+
+it('classifies ICMP destination unreachable variants as host unreachable', function (string $line) {
+    $result = PingResult::fromPingOutput([$line], 1, 'example.com', 1);
+
+    expect($result->error())->toBe(PingError::HostUnreachable);
+})->with([
+    'From 10.0.0.1 icmp_seq=1 Destination Net Unreachable',
+    'From 10.0.0.1 icmp_seq=1 Destination Host Unreachable',
+    'From 10.0.0.1 icmp_seq=1 Destination Port Unreachable',
+]);
+
+it('classifies "no answer yet" iputils output as timeout', function () {
+    $output = [
+        'PING 23.88.67.24 (23.88.67.24) 56(84) bytes of data.',
+        'no answer yet for icmp_seq=1',
+        'no answer yet for icmp_seq=2',
+        '',
+        '--- 23.88.67.24 ping statistics ---',
+        '5 packets transmitted, 0 received, 100% packet loss, time 4097ms',
+    ];
+
+    $result = PingResult::fromPingOutput($output, 1, '23.88.67.24', 5);
+
+    expect($result->error())->toBe(PingError::Timeout);
+});

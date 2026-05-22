@@ -215,20 +215,17 @@ class PingResult implements Stringable
     {
         $output = strtolower($output);
 
-        if (str_contains($output, 'unknown host') || str_contains($output, 'name or service not known')) {
-            return PingError::HostnameNotFound;
-        }
+        $errorsByNeedles = [
+            [PingError::HostnameNotFound, ['unknown host', 'name or service not known']],
+            [PingError::HostUnreachable, ['no route to host', 'net unreachable', 'port unreachable', 'host unreachable']],
+            [PingError::PermissionDenied, ['permission denied']],
+            [PingError::Timeout, ['timeout', 'timed out', 'no answer yet for icmp_seq']],
+        ];
 
-        if (str_contains($output, 'no route to host') || str_contains($output, 'host unreachable')) {
-            return PingError::HostUnreachable;
-        }
-
-        if (str_contains($output, 'permission denied')) {
-            return PingError::PermissionDenied;
-        }
-
-        if (str_contains($output, 'timeout') || str_contains($output, 'timed out')) {
-            return PingError::Timeout;
+        foreach ($errorsByNeedles as [$error, $needles]) {
+            if (array_any($needles, fn (string $needle) => str_contains($output, $needle))) {
+                return $error;
+            }
         }
 
         return PingError::UnknownError;
