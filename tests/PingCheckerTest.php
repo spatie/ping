@@ -3,6 +3,7 @@
 namespace Tests\Feature\PingCheck;
 
 use ReflectionClass;
+use Spatie\Ping\Enums\IpVersion;
 use Spatie\Ping\Enums\PingError;
 use Spatie\Ping\Ping;
 use Spatie\Ping\PingResult;
@@ -465,30 +466,30 @@ it('can ping a ipv6 address', function () {
 
 it('can force IPv4', function () {
     $checker = (new Ping('google.com'))
-        ->ipVersion(\Spatie\Ping\Enums\IpVersion::IPv4);
+        ->ipVersion(IpVersion::IPv4);
 
     $result = $checker->run();
 
     expect($result)->toBeInstanceOf(PingResult::class);
     expect($result->isSuccess())->toBeTrue();
-    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
+    expect($result->ipVersion())->toBe(IpVersion::IPv4);
 })->skipOnGitHubActions();
 
 it('can force IPv6', function () {
     $checker = (new Ping('google.com'))
-        ->ipVersion(\Spatie\Ping\Enums\IpVersion::IPv6);
+        ->ipVersion(IpVersion::IPv6);
 
     $result = $checker->run();
 
     expect($result)->toBeInstanceOf(PingResult::class);
     expect($result->isSuccess())->toBeTrue();
-    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
+    expect($result->ipVersion())->toBe(IpVersion::IPv6);
 })->whenIpv6Available();
 
 it('uses IPv4 by default', function () {
     $checker = new Ping('example.com');
 
-    expect($checker->run()->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv4);
+    expect($checker->run()->ipVersion())->toBe(IpVersion::IPv4);
 })->skipOnGitHubActions();
 
 it('includes ip_version in toArray output', function () {
@@ -528,7 +529,7 @@ it('can create PingResult from toArray with ip_version', function () {
 
     $result = PingResult::fromArray($originalData);
 
-    expect($result->ipVersion())->toBe(\Spatie\Ping\Enums\IpVersion::IPv6);
+    expect($result->ipVersion())->toBe(IpVersion::IPv6);
     expect($result->toArray()['options']['ip_version'])->toBe('ipv6');
 });
 

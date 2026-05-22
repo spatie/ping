@@ -40,7 +40,7 @@ class PingResult implements Stringable
 
     protected string $rawOutput = '';
 
-    /** @var array<int, \Spatie\Ping\PingResultLine> */
+    /** @var array<int, PingResultLine> */
     protected array $lines = [];
 
     public static function fromPingOutput(
