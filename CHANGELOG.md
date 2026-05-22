@@ -2,6 +2,20 @@
 
 All notable changes to `ping` will be documented in this file.
 
+## 1.2.2 - 2026-05-22
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/spatie/ping/pull/21
+* Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0 by @dependabot[bot] in https://github.com/spatie/ping/pull/22
+* Recognise more iputils ping error strings by @mattiasgeniar in https://github.com/spatie/ping/pull/23
+
+### New Contributors
+
+* @mattiasgeniar made their first contribution in https://github.com/spatie/ping/pull/23
+
+**Full Changelog**: https://github.com/spatie/ping/compare/1.2.1...1.2.2
+
 ## 1.2.1 - 2026-02-09
 
 ### What's Changed
