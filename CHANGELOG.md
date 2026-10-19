@@ -2,6 +2,23 @@
 
 All notable changes to `ping` will be documented in this file.
 
+## 1.2.3 - 2026-10-19
+
+### What’s Changed
+
+#### Maintenance
+
+- Update the development test suite to Pest 5.3 (#28).
+- Update actions/checkout to v7 (#24).
+- Harden the Dependabot auto-merge author check.
+- Update README workflow badges.
+
+#### Breaking Changes
+
+None for package consumers. The development test suite now uses Pest 5 and PHPUnit 13; the package’s PHP requirement and runtime API are unchanged.
+
+**Full Changelog**: https://github.com/spatie/ping/compare/1.2.2...1.2.3
+
 ## 1.2.2 - 2026-05-22
 
 ### What's Changed
